@@ -9,24 +9,27 @@
 <body>
     <div class="container">
         <header>
-            <h1>📊 Fluxo de Caixa</h1>
-            <a href="/logout" class="btn-logout">Sair</a>
+            <div>
+                <h1>📊 Meu Fluxo de Caixa</h1>
+                <small style="color: #7f8c8d;">Usuário: {{ usuario_logado }}</small>
+            </div>
+            <a href="{{ url_for('logout') }}" class="btn-logout">Sair</a>
         </header>
 
         <div class="filter-bar">
-            <form action="/" method="GET" id="filterForm">
-                <select name="mes" onchange="this.form.submit()">
+            <form action="{{ url_for('index') }}" method="GET" id="filterForm">
+                <select name="mes" onchange="document.getElementById('filterForm').submit()">
                     {% for i in range(1, 13) %}
                         <option value="{{ i }}" {{ 'selected' if i == mes_atual }}>{{ meses_nome[i-1] }}</option>
                     {% endfor %}
                 </select>
-                <select name="ano" onchange="this.form.submit()">
+                <select name="ano" onchange="document.getElementById('filterForm').submit()">
                     {% for a in range(2025, 2028) %}
                         <option value="{{ a }}" {{ 'selected' if a == ano_atual }}>{{ a }}</option>
                     {% endfor %}
                 </select>
             </form>
-            <span class="view-label">Exibindo: <strong>{{ meses_nome[mes_atual-1] }} / {{ ano_atual }}</strong></span>
+            <span class="view-label">Período: <strong>{{ meses_nome[mes_atual-1] }} / {{ ano_atual }}</strong></span>
         </div>
 
         <div class="dashboard">
@@ -45,12 +48,12 @@
         </div>
 
         <section class="form-section">
-            <form action="/add" method="POST" class="add-form">
-                <input type="text" name="descricao" placeholder="Descrição" required>
+            <form action="{{ url_for('add') }}" method="POST" class="add-form">
+                <input type="text" name="descricao" placeholder="Descrição (Ex: Cliente X)" required>
                 <input type="number" step="0.01" name="valor" placeholder="Valor R$" required>
                 <select name="tipo" required>
-                    <option value="saida">🔴 Saída</option>
-                    <option value="entrada">🟢 Entrada</option>
+                    <option value="saida">🔴 Saída (Gasto)</option>
+                    <option value="entrada">🟢 Entrada (Ganho)</option>
                 </select>
                 <input type="date" name="vencimento" required>
                 <button type="submit" class="btn-add">Adicionar</button>
@@ -75,15 +78,15 @@
                         <td>R$ {{ ("%.2f"|format(item.valor)).replace('.', ',') }}</td>
                         <td class="actions">
                             {% if not item.pago and item.tipo == 'saida' %}
-                                <a href="/pagar/{{ item._id }}" title="Marcar como Pago">✔️</a>
+                                <a href="{{ url_for('pagar', id=item._id) }}" title="Marcar como Pago">✔️</a>
                             {% endif %}
-                            <a href="/deletar/{{ item._id }}" title="Excluir">🗑️</a>
+                            <a href="{{ url_for('deletar', id=item._id) }}" title="Excluir">🗑️</a>
                         </td>
                     </tr>
                     {% endfor %}
                     {% if not movimentacoes %}
                     <tr>
-                        <td colspan="4" style="text-align: center; padding: 40px; color: #95a5a6;">Vazio para este mês.</td>
+                        <td colspan="4" style="text-align: center; padding: 40px; color: #95a5a6;">Nenhum registro para este mês.</td>
                     </tr>
                     {% endif %}
                 </tbody>

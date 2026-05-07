@@ -3,19 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registrar - Conta em Dia</title>
+    <title>Criar Conta - Conta em Dia</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body style="background: #f4f7f6; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0;">
-    <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 350px;">
-        <h2 style="text-align: center; color: #2c3e50;">Criar Conta</h2>
-        {% if erro %}<p style="color: #e74c3c; text-align: center;">{{ erro }}</p>{% endif %}
-        <form action="/registrar" method="POST">
-            <input type="email" name="email" placeholder="E-mail" required style="width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box;">
-            <input type="password" name="senha" placeholder="Senha" required style="width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box;">
-            <button type="submit" style="width: 100%; background: #3498db; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer;">Cadastrar</button>
+    <div style="background: white; padding: 2.5rem; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); width: 100%; max-width: 360px;">
+        <h2 style="text-align: center; color: #2c3e50; margin-bottom: 5px;">Crie seu Usuário</h2>
+        <p style="text-align: center; color: #7f8c8d; font-size: 0.9rem; margin-bottom: 25px;">Configure seu acesso exclusivo</p>
+
+        {% if erro %}
+            <p style="color: #e74c3c; background: #fdf2f2; padding: 10px; border-radius: 6px; text-align: center; font-size: 0.9rem;">{{ erro }}</p>
+        {% endif %}
+
+        <form action="{{ url_for('registrar') }}" method="POST">
+            <input type="email" name="email" placeholder="Digite seu e-mail" required style="width: 100%; padding: 12px; margin-bottom: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box;">
+            <input type="password" name="senha" placeholder="Crie uma senha forte" required style="width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box;">
+            <button type="submit" style="width: 100%; background: #3498db; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1rem;">Cadastrar Conta</button>
         </form>
-        <p style="text-align: center; margin-top: 15px;"><a href="/login" style="color: #7f8c8d; text-decoration: none; font-size: 0.9rem;">Já tenho conta</a></p>
+        <p style="text-align: center; margin-top: 20px; font-size: 0.9rem;"><a href="{{ url_for('login') }}" style="color: #7f8c8d; text-decoration: none;">Voltar para o Login</a></p>
     </div>
 </body>
 </html>
