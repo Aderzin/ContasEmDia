@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fluxo de Caixa - Conta em Dia</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📊 Fluxo de Caixa</h1>
+            <a href="/logout" class="btn-logout">Sair</a>
+        </header>
+
+        <div class="filter-bar">
+            <form action="/" method="GET" id="filterForm">
+                <select name="mes" onchange="this.form.submit()">
+                    {% for i in range(1, 13) %}
+                        <option value="{{ i }}" {{ 'selected' if i == mes_atual }}>{{ meses_nome[i-1] }}</option>
+                    {% endfor %}
+                </select>
+                <select name="ano" onchange="this.form.submit()">
+                    {% for a in range(2025, 2028) %}
+                        <option value="{{ a }}" {{ 'selected' if a == ano_atual }}>{{ a }}</option>
+                    {% endfor %}
+                </select>
+            </form>
+            <span class="view-label">Exibindo: <strong>{{ meses_nome[mes_atual-1] }} / {{ ano_atual }}</strong></span>
+        </div>
+
+        <div class="dashboard">
+            <div class="card entrada">
+                <span>Entradas</span>
+                <strong>R$ {{ ("%.2f"|format(total_entradas)).replace('.', ',') }}</strong>
+            </div>
+            <div class="card saida">
+                <span>Saídas</span>
+                <strong>R$ {{ ("%.2f"|format(total_saidas)).replace('.', ',') }}</strong>
+            </div>
+            <div class="card saldo" style="background-color: {{ '#2ecc71' if saldo >= 0 else '#e74c3c' }}">
+                <span>Saldo Atual</span>
+                <strong>R$ {{ ("%.2f"|format(saldo)).replace('.', ',') }}</strong>
+            </div>
+        </div>
+
+        <section class="form-section">
+            <form action="/add" method="POST" class="add-form">
+                <input type="text" name="descricao" placeholder="Descrição" required>
+                <input type="number" step="0.01" name="valor" placeholder="Valor R$" required>
+                <select name="tipo" required>
+                    <option value="saida">🔴 Saída</option>
+                    <option value="entrada">🟢 Entrada</option>
+                </select>
+                <input type="date" name="vencimento" required>
+                <button type="submit" class="btn-add">Adicionar</button>
+            </form>
+        </section>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Descrição</th>
+                        <th>Valor</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in movimentacoes %}
+                    <tr class="{{ item.tipo }} {{ 'pago' if item.pago }}">
+                        <td>{{ item.vencimento.strftime('%d/%m') }}</td>
+                        <td>{{ item.descricao }}</td>
+                        <td>R$ {{ ("%.2f"|format(item.valor)).replace('.', ',') }}</td>
+                        <td class="actions">
+                            {% if not item.pago and item.tipo == 'saida' %}
+                                <a href="/pagar/{{ item._id }}" title="Marcar como Pago">✔️</a>
+                            {% endif %}
+                            <a href="/deletar/{{ item._id }}" title="Excluir">🗑️</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% if not movimentacoes %}
+                    <tr>
+                        <td colspan="4" style="text-align: center; padding: 40px; color: #95a5a6;">Vazio para este mês.</td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
